@@ -29,14 +29,14 @@
             align-items: center;
             text-align: center;
             z-index: 1000;
-            animation: flicker 0.1s infinite;
+            animation: flicker 0.08s infinite;
         }
 
         #install-screen h1 {
-            font-size: 2em;
+            font-size: 2.5em;
             text-transform: uppercase;
-            text-shadow: 0 0 10px #f00;
-            animation: glitch-text 0.2s infinite;
+            text-shadow: 0 0 15px #f00;
+            animation: glitch-text 0.15s infinite;
         }
 
         #horror-app {
@@ -52,18 +52,18 @@
 
         .glitch-image {
             position: absolute;
-            opacity: 0.6;
-            animation: glitch-move 0.3s infinite, flicker 0.05s infinite;
+            opacity: 0.7;
+            animation: glitch-move 0.25s infinite, flicker 0.04s infinite;
             filter: hue-rotate(360deg);
         }
 
         .glitch-text {
             position: absolute;
             color: #f00;
-            font-size: 2.5em;
+            font-size: 3em;
             text-transform: uppercase;
-            text-shadow: 0 0 15px #f00;
-            animation: glitch-text 0.15s infinite;
+            text-shadow: 0 0 20px #f00;
+            animation: glitch-text 0.1s infinite;
             pointer-events: none;
         }
 
@@ -73,29 +73,33 @@
 
         .pixelate {
             image-rendering: pixelated;
-            filter: blur(3px);
+            filter: blur(4px);
+        }
+
+        .distort {
+            filter: contrast(200%) saturate(150%);
         }
 
         @keyframes glitch-text {
             0% { transform: translate(0, 0); }
-            20% { transform: translate(-8px, 8px); }
-            40% { transform: translate(8px, -8px); }
-            60% { transform: translate(-8px, 0); }
-            80% { transform: translate(8px, 0); }
+            20% { transform: translate(-10px, 10px); }
+            40% { transform: translate(10px, -10px); }
+            60% { transform: translate(-10px, 0); }
+            80% { transform: translate(10px, 0); }
             100% { transform: translate(0, 0); }
         }
 
         @keyframes glitch-move {
             0% { transform: translate(0, 0); }
-            25% { transform: translate(-15px, 15px); }
-            50% { transform: translate(15px, -15px); }
-            75% { transform: translate(-15px, 0); }
+            25% { transform: translate(-20px, 20px); }
+            50% { transform: translate(20px, -20px); }
+            75% { transform: translate(-20px, 0); }
             100% { transform: translate(0, 0); }
         }
 
         @keyframes flicker {
             0% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.6; }
             100% { opacity: 1; }
         }
 
@@ -107,13 +111,13 @@
             height: 100%;
             background: repeating-linear-gradient(
                 45deg,
-                rgba(255, 0, 0, 0.3),
-                rgba(255, 0, 0, 0.3) 3px,
-                transparent 3px,
-                transparent 6px
+                rgba(255, 0, 0, 0.4),
+                rgba(255, 0, 0, 0.4) 4px,
+                transparent 4px,
+                transparent 8px
             );
             pointer-events: none;
-            animation: flicker 0.05s infinite;
+            animation: flicker 0.04s infinite;
         }
 
         .demon-overlay {
@@ -122,22 +126,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             pointer-events: none;
-            animation: flicker 0.1s infinite;
+            animation: flicker 0.08s infinite;
         }
     </style>
 </head>
 <body>
     <div id="install-screen">
-        <h1>ADD TO HOME SCREEN<br></h1>
+        <h1>ADD TO HOME SCREEN<br>DEMONS AWAIT</h1>
     </div>
     <div id="horror-app">
         <div class="error-overlay"></div>
         <div class="demon-overlay"></div>
     </div>
-    <audio id="creepy-sound" loop>
+    <audio id="creepy-sound-1" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/07/28/audio_6c3b3b3b3b.mp3" type="audio/mp3">
+    </audio>
+    <audio id="creepy-sound-2">
+        <source src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-77317/zapsplat_horror_creepy_ambience_001_77317.mp3" type="audio/mp3">
+    </audio>
+    <audio id="creepy-sound-3">
+        <source src="https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-61905/zapsplat_horror_ghostly_breath_001_61905.mp3" type="audio/mp3">
     </audio>
 
     <script>
@@ -173,7 +183,10 @@
                             '/',
                             'https://i.ibb.co/dwXDBk7P/IMG-0458.jpg',
                             'https://i.ibb.co/xKrRv20G/IMG-0457.jpg',
-                            'https://cdn.pixabay.com/download/audio/2022/07/28/audio_6c3b3b3b3b.mp3'
+                            'https://i.ibb.co/0pRHx2sd/2ea0fa89-9303-48ad-8c08-a656e90f80a8.jpg',
+                            'https://cdn.pixabay.com/download/audio/2022/07/28/audio_6c3b3b3b3b.mp3',
+                            'https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-77317/zapsplat_horror_creepy_ambience_001_77317.mp3',
+                            'https://www.zapsplat.com/wp-content/uploads/2015/sound-effects-61905/zapsplat_horror_ghostly_breath_001_61905.mp3'
                         ]);
                     })
                 );
@@ -198,7 +211,9 @@
         // Main Logic
         const installScreen = document.getElementById('install-screen');
         const horrorApp = document.getElementById('horror-app');
-        const creepySound = document.getElementById('creepy-sound');
+        const sound1 = document.getElementById('creepy-sound-1');
+        const sound2 = document.getElementById('creepy-sound-2');
+        const sound3 = document.getElementById('creepy-sound-3');
 
         // Check if running as PWA (standalone mode)
         const isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -214,32 +229,42 @@
         function startHorror() {
             installScreen.style.display = 'none';
             horrorApp.style.display = 'block';
-            creepySound.play();
+            // Play sounds with random delays for overlap
+            sound1.play().catch(() => console.log('Sound 1 blocked by browser'));
+            setTimeout(() => sound2.play().catch(() => console.log('Sound 2 blocked')), Math.random() * 2000);
+            setTimeout(() => sound3.play().catch(() => console.log('Sound 3 blocked')), Math.random() * 3000);
 
             // Generate intense glitch effects
-            setInterval(createGlitchImage, 80); // More frequent images
-            setInterval(createGlitchText, 120); // More frequent texts
+            setInterval(createGlitchImage, 50); // Very frequent images
+            setInterval(createGlitchText, 80); // Very frequent texts
         }
 
         function createGlitchImage() {
             const img = document.createElement('img');
-            img.src = Math.random() > 0.5 ? 'https://i.ibb.co/dwXDBk7P/IMG-0458.jpg' : 'https://i.ibb.co/xKrRv20G/IMG-0457.jpg';
+            const images = [
+                'https://i.ibb.co/dwXDBk7P/IMG-0458.jpg',
+                'https://i.ibb.co/xKrRv20G/IMG-0457.jpg',
+                'https://i.ibb.co/0pRHx2sd/2ea0fa89-9303-48ad-8c08-a656e90f80a8.jpg'
+            ];
+            img.src = images[Math.floor(Math.random() * images.length)];
             img.classList.add('glitch-image');
-            if (Math.random() > 0.7) img.classList.add('invert'); // Higher inversion chance
-            if (Math.random() > 0.6) img.classList.add('pixelate'); // Higher pixelation chance
-            img.style.width = `${Math.random() * 350 + 100}px`; // Larger images
+            if (Math.random() > 0.8) img.classList.add('invert'); // High inversion chance
+            if (Math.random() > 0.7) img.classList.add('pixelate'); // High pixelation chance
+            if (Math.random() > 0.6) img.classList.add('distort'); // New distortion effect
+            img.style.width = `${Math.random() * 400 + 100}px`; // Larger images
             img.style.left = `${Math.random() * window.innerWidth}px`;
             img.style.top = `${Math.random() * window.innerHeight}px`;
+            img.style.transform = `rotate(${Math.random() * 360}deg)`; // Random rotation
             horrorApp.appendChild(img);
 
-            // Remove after 1.2 seconds to keep it busy
-            setTimeout(() => img.remove(), 1200);
+            // Remove after 1 second to keep it very busy
+            setTimeout(() => img.remove(), 1000);
         }
 
         function createGlitchText() {
             const text = document.createElement('div');
             const phrases = [
-                'DEMONS ',
+                'DEMONS',
                 'ERROR 666',
                 'SUKĀ LEDU',
                 'MARUTA PĒČA',
@@ -248,17 +273,22 @@
                 'VELNS',
                 'KRUSTS',
                 '👿',
-                'ZAJEBA'
+                'ZAJEBA',
+                'POSSESSED',
+                'HELL AWAITS',
+                'BLOOD RITUAL',
+                'DEMONS RISE'
             ];
             text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
             text.classList.add('glitch-text');
-            if (Math.random() > 0.8) text.classList.add('invert'); // Higher inversion chance
+            if (Math.random() > 0.85) text.classList.add('invert'); // Higher inversion chance
             text.style.left = `${Math.random() * window.innerWidth}px`;
             text.style.top = `${Math.random() * window.innerHeight}px`;
+            text.style.transform = `rotate(${Math.random() * 90 - 45}deg)`; // Random text rotation
             horrorApp.appendChild(text);
 
-            // Remove after 1.2 seconds
-            setTimeout(() => text.remove(), 1200);
+            // Remove after 1 second
+            setTimeout(() => text.remove(), 1000);
         }
     </script>
 </body>
