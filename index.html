@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>P3ČA</title>
+    <link rel="icon" href="data:image/png;base64,IMAGE1_BASE64">
+    <link rel="apple-touch-icon" href="data:image/png;base64,IMAGE1_BASE64">
+    <link rel="manifest" href="data:application/json,{
+        \"name\": \"P3ČA\",
+        \"short_name\": \"P3ČA\",
+        \"start_url\": \".\",
+        \"display\": \"standalone\",
+        \"background_color\": \"#000000\",
+        \"theme_color\": \"#000000\",
+        \"icons\": [
+            {
+                \"src\": \"data:image/png;base64,IMAGE1_BASE64\",
+                \"sizes\": \"512x512\",
+                \"type\": \"image/png\"
+            }
+        ]
+    }">
+    <style>
+        body { margin: 0; overflow: hidden; font-family: monospace; color: #fff; background: #000; }
+        #intro, #main, #install-prompt { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+        #intro { display: flex; align-items: center; justify-content: center; font-size: 32px; background: #000; }
+        #main { background: #000; }
+        .image, .duplicate { position: absolute; width: 200px; animation: shake 0.1s infinite; }
+        .duplicate { opacity: 0.5; transform: translate(10px, 10px); }
+        .error { position: absolute; font-size: 18px; color: #f00; animation: glitch-text 0.2s infinite; }
+        .glitch { animation: glitch 0.1s infinite alternate; }
+        .inversion { filter: invert(100%); }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            50% { transform: translate(5px, 5px); }
+            100% { transform: translate(-5px, -5px); }
+        }
+        @keyframes glitch-text {
+            0% { transform: skew(0deg); }
+            50% { transform: skew(10deg); }
+            100% { transform: skew(-10deg); }
+        }
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(3px, 3px); }
+            100% { transform: translate(-3px, -3px); }
+        }
+        #controls { position: fixed; bottom: 10px; right: 10px; display: flex; gap: 10px; }
+        .control-btn { width: 60px; height: 60px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        @media (min-width: 768px) { .control-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <div id="install-prompt">Lūdzu, pievienojiet lietotni sākuma ekrānam!</div>
+    <div id="intro">By hexwound</div>
+    <div id="main"></div>
+    <div id="controls">
+        <div class="control-btn" ontouchstart="move('up')" ontouchend="stop()">↑</div>
+        <div class="control-btn" ontouchstart="move('left')" ontouchend="stop()">←</div>
+        <div class="control-btn" ontouchstart="move('right')" ontouchend="stop()">→</div>
+        <div class="control-btn" ontouchstart="move('down')" ontouchend="stop()">↓</div>
+    </div>
+    <audio id="creepy" src="data:audio/mp3;base64,SOUND_BASE64" loop autoplay></audio>
+    <script>
+        // PWA проверка
+        window.addEventListener('load', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('data:application/javascript,navigator.serviceWorker.controller.postMessage("sw");');
+            }
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById('install-prompt').style.display = 'block';
+                return;
+            }
+            document.getElementById('install-prompt').style.display = 'none';
+            startIntro();
+        });
+
+        // Титульный экран
+        function startIntro() {
+            document.getElementById('intro').style.display = 'flex';
+            let flashes = 0;
+            const interval = setInterval(() => {
+                document.body.classList.toggle('inversion');
+                document.getElementById('intro').classList.toggle('glitch');
+                flashes++;
+                if (flashes > 10) {
+                    clearInterval(interval);
+                    document.getElementById('intro').style.display = 'none';
+                    document.body.classList.remove('inversion', 'glitch');
+                    startMain();
+                }
+            }, 500);
+        }
+
+        // Основной экран
+        function startMain() {
+            document.getElementById('main').style.display = 'block';
+            const main = document.getElementById('main');
+
+            // Добавление изображений и дубликатов
+            const images = [
+                { src: 'data:image/png;base64,IMAGE1_BASE64', x: 100, y: 100 },
+                { src: 'data:image/png;base64,IMAGE2_BASE64', x: 300, y: 200 }
+            ];
+            images.forEach(img => {
+                const original = document.createElement('img');
+                original.src = img.src;
+                original.className = 'image';
+                original.style.left = `${img.x}px`;
+                original.style.top = `${img.y}px`;
+                main.appendChild(original);
+
+                const duplicate = document.createElement('img');
+                duplicate.src = img.src;
+                duplicate.className = 'duplicate';
+                duplicate.style.left = `${img.x}px`;
+                duplicate.style.top = `${img.y}px`;
+                main.appendChild(duplicate);
+            });
+
+            // Добавление текстовых ошибок
+            const errors = ['Kļūda 404: Maruta Pēča nav atrasta', 'VIRUS DETECTED', 'SISTĒMAS SABRUKUMS', 'Maruta Pēča tevi vēro'];
+            for (let i = 0; i < 10; i++) {
+                const error = document.createElement('div');
+                error.className = 'error';
+                error.innerText = errors[Math.floor(Math.random() * errors.length)];
+                error.style.left = `${Math.random() * 100}%`;
+                error.style.top = `${Math.random() * 100}%`;
+                main.appendChild(error);
+            }
+
+            // Периодическая инверсия
+            setInterval(() => {
+                document.body.classList.toggle('inversion');
+            }, 2000);
+
+            // Дополнительные глитч-эффекты
+            setInterval(() => {
+                const els = document.querySelectorAll('.image, .duplicate');
+                els.forEach(el => el.classList.toggle('glitch'));
+            }, 1000);
+        }
+
+        // Управление
+        let keys = { w: false, s: false, a: false, d: false };
+        document.addEventListener('keydown', e => {
+            if (e.key === 'w') keys.w = true;
+            if (e.key === 's') keys.s = true;
+            if (e.key === 'a') keys.a = true;
+            if (e.key === 'd') keys.d = true;
+            moveImages();
+        });
+        document.addEventListener('keyup', e => {
+            if (e.key === 'w') keys.w = false;
+            if (e.key === 's') keys.s = false;
+            if (e.key === 'a') keys.a = false;
+            if (e.key === 'd') keys.d = false;
+        });
+
+        function move(dir) {
+            if (dir === 'up') keys.w = true;
+            if (dir === 'down') keys.s = true;
+            if (dir === 'left') keys.a = true;
+            if (dir === 'right') keys.d = true;
+            moveImages();
+        }
+
+        function stop() {
+            keys.w = keys.s = keys.a = keys.d = false;
+        }
+
+        function moveImages() {
+            const images = document.querySelectorAll('.image, .duplicate');
+            images.forEach(img => {
+                let x = parseFloat(img.style.left);
+                let y = parseFloat(img.style.top);
+                if (keys.w) y -= 5;
+                if (keys.s) y += 5;
+                if (keys.a) x -= 5;
+                if (keys.d) x += 5;
+                img.style.left = `${x}px`;
+                img.style.top = `${y}px`;
+            });
+        }
+    </script>
+</body>
+</html>
