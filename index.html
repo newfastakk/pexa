@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>peca👶🏿</title>
+    <title>DEMONS GLITCH HORROR</title>
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/dwXDBk7P/IMG-0458.jpg">
     <style>
         body, html {
             margin: 0;
@@ -15,7 +17,7 @@
             font-family: 'Courier New', monospace;
         }
 
-        #title-screen {
+        #install-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -25,51 +27,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            text-align: center;
             z-index: 1000;
             animation: flicker 0.1s infinite;
         }
 
-        #title-screen h1 {
-            font-size: 4em;
+        #install-screen h1 {
+            font-size: 2em;
             text-transform: uppercase;
             text-shadow: 0 0 10px #f00;
             animation: glitch-text 0.2s infinite;
-        }
-
-        #desktop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://i.ibb.co/xKrRv20G/IMG-0457.jpg') no-repeat center/cover;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 500;
-        }
-
-        #app-icon {
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        #app-icon img {
-            width: 100px;
-            height: 100px;
-            border: 2px solid #f00;
-            box-shadow: 0 0 10px #f00;
-        }
-
-        #app-icon:hover {
-            transform: scale(1.2);
-        }
-
-        #app-icon p {
-            color: #fff;
-            text-shadow: 0 0 5px #f00;
-            margin: 5px 0;
         }
 
         #horror-app {
@@ -79,24 +46,24 @@
             width: 100%;
             height: 100%;
             display: none;
-            z-index: 600;
+            z-index: 500;
             overflow: hidden;
         }
 
         .glitch-image {
             position: absolute;
-            opacity: 0.7;
-            animation: glitch-move 0.5s infinite, flicker 0.1s infinite;
+            opacity: 0.6;
+            animation: glitch-move 0.3s infinite, flicker 0.05s infinite;
             filter: hue-rotate(360deg);
         }
 
         .glitch-text {
             position: absolute;
             color: #f00;
-            font-size: 2em;
+            font-size: 2.5em;
             text-transform: uppercase;
-            text-shadow: 0 0 10px #f00;
-            animation: glitch-text 0.2s infinite;
+            text-shadow: 0 0 15px #f00;
+            animation: glitch-text 0.15s infinite;
             pointer-events: none;
         }
 
@@ -106,29 +73,29 @@
 
         .pixelate {
             image-rendering: pixelated;
-            filter: blur(2px);
+            filter: blur(3px);
         }
 
         @keyframes glitch-text {
             0% { transform: translate(0, 0); }
-            20% { transform: translate(-5px, 5px); }
-            40% { transform: translate(5px, -5px); }
-            60% { transform: translate(-5px, 0); }
-            80% { transform: translate(5px, 0); }
+            20% { transform: translate(-8px, 8px); }
+            40% { transform: translate(8px, -8px); }
+            60% { transform: translate(-8px, 0); }
+            80% { transform: translate(8px, 0); }
             100% { transform: translate(0, 0); }
         }
 
         @keyframes glitch-move {
             0% { transform: translate(0, 0); }
-            25% { transform: translate(-10px, 10px); }
-            50% { transform: translate(10px, -10px); }
-            75% { transform: translate(-10px, 0); }
+            25% { transform: translate(-15px, 15px); }
+            50% { transform: translate(15px, -15px); }
+            75% { transform: translate(-15px, 0); }
             100% { transform: translate(0, 0); }
         }
 
         @keyframes flicker {
             0% { opacity: 1; }
-            50% { opacity: 0.8; }
+            50% { opacity: 0.7; }
             100% { opacity: 1; }
         }
 
@@ -139,92 +106,159 @@
             width: 100%;
             height: 100%;
             background: repeating-linear-gradient(
-                0deg,
-                rgba(255, 0, 0, 0.2),
-                rgba(255, 0, 0, 0.2) 2px,
-                transparent 2px,
-                transparent 4px
+                45deg,
+                rgba(255, 0, 0, 0.3),
+                rgba(255, 0, 0, 0.3) 3px,
+                transparent 3px,
+                transparent 6px
             );
+            pointer-events: none;
+            animation: flicker 0.05s infinite;
+        }
+
+        .demon-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             pointer-events: none;
             animation: flicker 0.1s infinite;
         }
     </style>
 </head>
 <body>
-    <div id="title-screen">
-        <h1>marutiņa peca 👿👺</h1>
-    </div>
-    <div id="desktop">
-        <div id="app-icon" onclick="launchApp()">
-            <img src="https://i.ibb.co/dwXDBk7P/IMG-0458.jpg" alt="App Icon">
-            <p>peca.SUM</p>
-        </div>
+    <div id="install-screen">
+        <h1>ADD TO HOME SCREEN<br>FOR DEMONS HORROR</h1>
     </div>
     <div id="horror-app">
         <div class="error-overlay"></div>
+        <div class="demon-overlay"></div>
     </div>
     <audio id="creepy-sound" loop>
         <source src="https://cdn.pixabay.com/download/audio/2022/07/28/audio_6c3b3b3b3b.mp3" type="audio/mp3">
     </audio>
 
     <script>
-        const titleScreen = document.getElementById('title-screen');
-        const desktop = document.getElementById('desktop');
+        // Embed Manifest as Data URL
+        const manifest = {
+            "name": "DEMONS GLITCH HORROR",
+            "short_name": "DEMONS",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#000000",
+            "theme_color": "#000000",
+            "icons": [
+                {
+                    "src": "https://i.ibb.co/dwXDBk7P/IMG-0458.jpg",
+                    "sizes": "512x512",
+                    "type": "image/jpeg"
+                }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestURL;
+        document.head.appendChild(manifestLink);
+
+        // Embed Service Worker as Data URL
+        const swCode = `
+            self.addEventListener('install', event => {
+                event.waitUntil(
+                    caches.open('demons-horror-v1').then(cache => {
+                        return cache.addAll([
+                            '/',
+                            'https://i.ibb.co/dwXDBk7P/IMG-0458.jpg',
+                            'https://i.ibb.co/xKrRv20G/IMG-0457.jpg',
+                            'https://cdn.pixabay.com/download/audio/2022/07/28/audio_6c3b3b3b3b.mp3'
+                        ]);
+                    })
+                );
+            });
+
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request).then(response => {
+                        return response || fetch(event.request);
+                    })
+                );
+            });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        const swURL = URL.createObjectURL(swBlob);
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(swURL).catch(err => console.error('Service Worker Error:', err));
+        }
+
+        // Main Logic
+        const installScreen = document.getElementById('install-screen');
         const horrorApp = document.getElementById('horror-app');
         const creepySound = document.getElementById('creepy-sound');
 
-        // Show title screen for 3 seconds, then transition to desktop
-        setTimeout(() => {
-            titleScreen.style.display = 'none';
-            desktop.style.display = 'flex';
-        }, 3000);
+        // Check if running as PWA (standalone mode)
+        const isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
 
-        function launchApp() {
-            desktop.style.display = 'none';
+        if (isPWA) {
+            startHorror();
+        } else {
+            installScreen.style.display = 'flex';
+            // Auto-start after 3 seconds for testing (remove in production)
+            setTimeout(startHorror, 3000);
+        }
+
+        function startHorror() {
+            installScreen.style.display = 'none';
             horrorApp.style.display = 'block';
             creepySound.play();
 
-            // Generate glitch effects
-            setInterval(() => {
-                createGlitchImage();
-                createGlitchText();
-            }, 200);
+            // Generate intense glitch effects
+            setInterval(createGlitchImage, 80); // More frequent images
+            setInterval(createGlitchText, 120); // More frequent texts
         }
 
         function createGlitchImage() {
             const img = document.createElement('img');
             img.src = Math.random() > 0.5 ? 'https://i.ibb.co/dwXDBk7P/IMG-0458.jpg' : 'https://i.ibb.co/xKrRv20G/IMG-0457.jpg';
             img.classList.add('glitch-image');
-            if (Math.random() > 0.5) img.classList.add('invert');
-            if (Math.random() > 0.5) img.classList.add('pixelate');
-            img.style.width = `${Math.random() * 200 + 100}px`;
+            if (Math.random() > 0.7) img.classList.add('invert'); // Higher inversion chance
+            if (Math.random() > 0.6) img.classList.add('pixelate'); // Higher pixelation chance
+            img.style.width = `${Math.random() * 350 + 100}px`; // Larger images
             img.style.left = `${Math.random() * window.innerWidth}px`;
             img.style.top = `${Math.random() * window.innerHeight}px`;
             horrorApp.appendChild(img);
 
-            // Remove after 2 seconds to prevent overload
-            setTimeout(() => img.remove(), 2000);
+            // Remove after 1.2 seconds to keep it busy
+            setTimeout(() => img.remove(), 1200);
         }
 
         function createGlitchText() {
             const text = document.createElement('div');
             const phrases = [
-                'ERROR 404',
-                'TEACHER_NAME',
-                'VIRUS DETECTED',
-                'SYSTEM FAILURE',
-                'RUN',
-                'HELP ME'
+                'DEMONS ',
+                'ERROR 666',
+                'SUKĀ LEDU',
+                'MARUTA PĒČA',
+                'MATEMATIKA',
+                '666',
+                'VELNS',
+                'KRUSTS',
+                '👿',
+                'ZAJEBA'
             ];
             text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
             text.classList.add('glitch-text');
-            if (Math.random() > 0.5) text.classList.add('invert');
+            if (Math.random() > 0.8) text.classList.add('invert'); // Higher inversion chance
             text.style.left = `${Math.random() * window.innerWidth}px`;
             text.style.top = `${Math.random() * window.innerHeight}px`;
             horrorApp.appendChild(text);
 
-            // Remove after 2 seconds
-            setTimeout(() => text.remove(), 2000);
+            // Remove after 1.2 seconds
+            setTimeout(() => text.remove(), 1200);
         }
     </script>
 </body>
