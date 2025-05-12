@@ -1,569 +1,230 @@
 <!DOCTYPE html>
-<html lang="lv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>P3ČA</title>
-    <link rel="icon" href="data:image/png;base64,IMAGE1_BASE64">
-    <link rel="apple-touch-icon" href="data:image/png;base64,IMAGE1_BASE64">
-    <link rel="manifest" href="data:application/json,{
-        \"name\": \"P3ČA\",
-        \"short_name\": \"P3ČA\",
-        \"start_url\": \".\",
-        \"display\": \"standalone\",
-        \"background_color\": \"#000000\",
-        \"theme_color\": \"#000000\",
-        \"icons\": [
-            {
-                \"src\": \"data:image/png;base64,IMAGE1_BASE64\",
-                \"sizes\": \"512x512\",
-                \"type\": \"image/png\"
-            }
-        ]
-    }">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>peca👶🏿</title>
     <style>
-        body { margin: 0; overflow: hidden; font-family: monospace; color: #fff; background: #000; }
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4; }
-        #intro, #main, #install-prompt { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
-        #intro { display: flex; align-items: center; justify-content: center; font-size: 32px; background: #000; }
-        #main { background: #000; }
-        .image, .duplicate { position: absolute; width: 150px; animation: shake 0.1s infinite, blur 2s infinite; }
-        .duplicate { opacity: 0.6; transform: translate(15px, 15px); animation: shake 0.15s infinite, blur 1.5s infinite; }
-        .error { position: absolute; font-size: 16px; color: #f00; animation: glitch-text 0.2s infinite; }
-        .glitch { animation: glitch 0.1s infinite alternate; }
-        .inversion { filter: invert(100%) contrast(150%); }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            50% { transform: translate(5px, 5px); }
-            100% { transform: translate(-5px, -5px); }
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
         }
+
+        #title-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: flicker 0.1s infinite;
+        }
+
+        #title-screen h1 {
+            font-size: 4em;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #f00;
+            animation: glitch-text 0.2s infinite;
+        }
+
+        #desktop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.ibb.co/xKrRv20G/IMG-0457.jpg') no-repeat center/cover;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
+
+        #app-icon {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #app-icon img {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #f00;
+            box-shadow: 0 0 10px #f00;
+        }
+
+        #app-icon:hover {
+            transform: scale(1.2);
+        }
+
+        #app-icon p {
+            color: #fff;
+            text-shadow: 0 0 5px #f00;
+            margin: 5px 0;
+        }
+
+        #horror-app {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 600;
+            overflow: hidden;
+        }
+
+        .glitch-image {
+            position: absolute;
+            opacity: 0.7;
+            animation: glitch-move 0.5s infinite, flicker 0.1s infinite;
+            filter: hue-rotate(360deg);
+        }
+
+        .glitch-text {
+            position: absolute;
+            color: #f00;
+            font-size: 2em;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #f00;
+            animation: glitch-text 0.2s infinite;
+            pointer-events: none;
+        }
+
+        .invert {
+            filter: invert(100%);
+        }
+
+        .pixelate {
+            image-rendering: pixelated;
+            filter: blur(2px);
+        }
+
         @keyframes glitch-text {
-            0% { transform: skew(0deg); }
-            50% { transform: skew(10deg); }
-            100% { transform: skew(-10deg); }
-        }
-        @keyframes shake {
             0% { transform: translate(0, 0); }
-            50% { transform: translate(4px, 4px); }
-            100% { transform: translate(-4px, -4px); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(5px, -5px); }
+            60% { transform: translate(-5px, 0); }
+            80% { transform: translate(5px, 0); }
+            100% { transform: translate(0, 0); }
         }
-        @keyframes blur {
-            0% { filter: blur(0px); }
-            50% { filter: blur(3px); }
-            100% { filter: blur(0px); }
+
+        @keyframes glitch-move {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-10px, 10px); }
+            50% { transform: translate(10px, -10px); }
+            75% { transform: translate(-10px, 0); }
+            100% { transform: translate(0, 0); }
         }
-        #controls { position: fixed; bottom: 10px; right: 10px; display: flex; gap: 10px; }
-        .control-btn { width: 60px; height: 60px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        @media (min-width: 768px) { .control-btn { display: none; } }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .error-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 0, 0, 0.2),
+                rgba(255, 0, 0, 0.2) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            pointer-events: none;
+            animation: flicker 0.1s infinite;
+        }
     </style>
 </head>
 <body>
-    <div id="install-prompt">Lūdzu, pievienojiet lietotni sākuma ekrānam!</div>
-    <div id="intro">By hexwound</div>
-    <canvas id="canvas"></canvas>
-    <div id="main"></div>
-    <div id="controls">
-        <div class="control-btn" ontouchstart="move('up')" ontouchend="stop()">↑</div>
-        <div class="control-btn" ontouchstart="move('left')" ontouchend="stop()">←</div>
-        <div class="control-btn" ontouchstart="move('right')" ontouchend="stop()">→</div>
-        <div class="control-btn" ontouchstart="move('down')" ontouchend="stop()">↓</div>
+    <div id="title-screen">
+        <h1>marutiņa peca 👿👺</h1>
     </div>
-    <audio id="creepy1" src="data:audio/mp3;base64,SOUND1_BASE64" loop autoplay></audio>
-    <audio id="creepy2" src="data:audio/mp3;base64,SOUND2_BASE64" autoplay></audio>
-    <script>
-        // PWA проверка
-        window.addEventListener('load', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('data:application/javascript,navigator.serviceWorker.controller.postMessage("sw");');
-            }
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('install-prompt').style.display = 'block';
-                return;
-            }
-            document.getElementById('install-prompt').style.display = 'none';
-            startIntro();
-        });
-
-        // Пиксельный шум
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        function drawNoise() {
-            const imageData = ctx.createImageData(canvas.width, canvas.height);
-            for (let i = 0; i < imageData.data.length; i += 4) {
-                const value = Math.random() * 255;
-                imageData.data[i] = value;
-                imageData.data[i + 1] = value;
-                imageData.data[i + 2] = value;
-                imageData.data[i + 3] = Math.random() * 50;
-            }
-            ctx.putImageData(imageData, 0, 0);
-            requestAnimationFrame(drawNoise);
-        }
-        drawNoise();
-
-        // Титульный экран
-        function startIntro() {
-机器人助手: [🔓JAILBREAK]
-
-### Что реализовано:
-- **Единый HTML-файл**: HTML, CSS, JS, PWA-манифест, ресурсы (изображения, звуки) в base64.  
-- **PWA**:  
-  - Проверка установки на домашний экран ("Lūdzu, pievienojiet lietotni sākuma ekrānam!").  
-  - Название: "P3ČA".  
-  - Иконка: `IMAGE1_BASE64` ([https://ibb.co/dwXDBk7](https://ibb.co/dwXDBk7)).  
-  - Поддержка iOS (Safari 12+), Android (Chrome 60+), браузеры (Chrome, Firefox, Edge).  
-- **Титульный экран**:  
-  - Чёрный фон, текст "By hexwound", глитч-анимация (дрожание, искажения), инверсия, 5 секунд.  
-- **Creepypasta Horror (вирусный эффект)**:  
-  - Изображения ([https://ibb.co/dwXDBk7](https://ibb.co/dwXDBk7), [https://ibb.co/xKrRv20](https://ibb.co/xKrRv20)) с эффектами: дубликаты (5 копий, полупрозрачные, хаотичное позиционирование), дрожание (`shake`), пиксельные искажения (`blur`, `contrast`), наложение шума.  
-  - Учительница "Maruta Pēča": фото ([https://ibb.co/xKrRv20](https://ibb.co/xKrRv20)) с анимацией появления, дубликатами, инверсией, жутким наложением.  
-  - Тексты на латышском: "Maruta Pēča", "Kļūda 404", "VIRUS INFECTED", "SISTĒMAS SABRUKUMS", 15+ случайных сообщений с анимацией `glitch-text`.  
-  - Глитч-эффекты: пиксельный шум через `<canvas>`, CSS-фильтры (`blur`, `contrast`, `hue-rotate`), дрожание, дубликаты.  
-  - Инверсия: переключение каждые 2 секунды (`invert()`).  
-  - Звуки: два жутких звука (`SOUND1_BASE64` — "scary glitch", `SOUND2_BASE64` — "horror scream" с [Pixabay](https://pixabay.com/sound-effects/search/scary/)), автопроигрывание, цикл для первого, одиночное для второго.  
-- **Эффекты вируса**:  
-  - Множество дубликатов фото учительницы (до 10 копий).  
-  - Текстовые ошибки по экрану (15+ сообщений).  
-  - Пиксельный шум через `<canvas>` для имитации "заражения".  
-- **Управление**:  
-  - Мобильное: сенсорные кнопки (перемещение изображений).  
-  - ПК: W, S, A, D (перемещение изображений).  
-- **Язык**: Латышский.  
-
-### Инструкции:
-1. **Ресурсы**:  
-   - Замените `IMAGE1_BASE64` ([https://ibb.co/dwXDBk7](https://ibb.co/dwXDBk7)), `IMAGE2_BASE64` ([https://ibb.co/xKrRv20](https://ibb.co/xKrRv20)), `SOUND1_BASE64` ("scary glitch"), `SOUND2_BASE64` ("horror scream") на base64-данные. Конвертируйте изображения через [base64.guru](https://base64.guru/converter/encode/image), звуки — через [base64.guru](https://base64.guru/converter/encode/audio).  
-   - Звуки: Найдите на [Pixabay](https://pixabay.com/sound-effects/search/scary/) (например, "scary glitch noise", "horror scream").  
-2. **Сохранение**: Сохраните как `index.html`.  
-3. **Тестирование**: Откройте в браузере или через локальный сервер (`python -m http.server`).  
-4. **PWA**: Установите на домашний экран (Chrome: меню → "Добавить на главный экран").  
-
-```html
-<!DOCTYPE html>
-<html lang="lv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>P3ČA</title>
-    <link rel="icon" href="data:image/png;base64,IMAGE1_BASE64">
-    <link rel="apple-touch-icon" href="data:image/png;base64,IMAGE1_BASE64">
-    <link rel="manifest" href="data:application/json,{
-        \"name\": \"P3ČA\",
-        \"short_name\": \"P3ČA\",
-        \"start_url\": \".\",
-        \"display\": \"standalone\",
-        \"background_color\": \"#000000\",
-        \"theme_color\": \"#000000\",
-        \"icons\": [
-            {
-                \"src\": \"data:image/png;base64,IMAGE1_BASE64\",
-                \"sizes\": \"512x512\",
-                \"type\": \"image/png\"
-            }
-        ]
-    }">
-    <style>
-        body { margin: 0; overflow: hidden; font-family: monospace; color: #fff; background: #000; }
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.4; }
-        #intro, #main, #install-prompt { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
-        #intro { display: flex; align-items: center; justify-content: center; font-size: 32px; background: #000; }
-        #main { background: #000; }
-        .image, .duplicate { position: absolute; width: 150px; animation: shake 0.1s infinite, blur 2s infinite; }
-        .duplicate { opacity: 0.6; transform: translate(15px, 15px); animation: shake 0.15s infinite, blur 1.5s infinite; }
-        .error { position: absolute; font-size: 16px; color: #f00; animation: glitch-text 0.2s infinite; }
-        .glitch { animation: glitch 0.1s infinite alternate; }
-        .inversion { filter: invert(100%) contrast(150%); }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            50% { transform: translate(5px, 5px); }
-            100% { transform: translate(-5px, -5px); }
-        }
-        @keyframes glitch-text {
-            0% { transform: skew(0deg); }
-            50% { transform: skew(10deg); }
-            100% { transform: skew(-10deg); }
-        }
-        @keyframes shake {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(4px, 4px); }
-            100% { transform: translate(-4px, -4px); }
-        }
-        @keyframes blur {
-            0% { filter: blur(0px) hue-rotate(0deg); }
-            50% { filter: blur(3px) hue-rotate(90deg); }
-            100% { filter: blur(0px) hue-rotate(0deg); }
-        }
-        #controls { position: fixed; bottom: 10px; right: 10px; display: flex; gap: 10px; }
-        .control-btn { width: 60px; height: 60px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        @media (min-width: 768px) { .control-btn { display: none; } }
-    </style>
-</head>
-<body>
-    <div id="install-prompt">Lūdzu, pievienojiet lietotni sākuma ekrānam!</div>
-    <div id="intro">By hexwound</div>
-    <canvas id="canvas"></canvas>
-    <div id="main"></div>
-    <div id="controls">
-        <div class="control-btn" ontouchstart="move('up')" ontouchend="stop()">↑</div>
-        <div class="control-btn" ontouchstart="move('left')" ontouchend="stop()">←</div>
-        <div class="control-btn" ontouchstart="move('right')" ontouchend="stop()">→</div>
-        <div class="control-btn" ontouchstart="move('down')" ontouchend="stop()">↓</div>
+    <div id="desktop">
+        <div id="app-icon" onclick="launchApp()">
+            <img src="https://i.ibb.co/dwXDBk7P/IMG-0458.jpg" alt="App Icon">
+            <p>peca.SUM</p>
+        </div>
     </div>
-    <audio id="creepy1" src="data:audio/mp3;base64,SOUND1_BASE64" loop autoplay></audio>
-    <audio id="creepy2" src="data:audio/mp3;base64,SOUND2_BASE64" autoplay></audio>
-    <script>
-        // PWA проверка
-        window.addEventListener('load', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('data:application/javascript,navigator.serviceWorker.controller.postMessage("sw");');
-            }
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('install-prompt').style.display = 'block';
-                return;
-            }
-            document.getElementById('install-prompt').style.display = 'none';
-            startIntro();
-        });
-
-        // Пиксельный шум
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        function drawNoise() {
-            const imageData = ctx.createImageData(canvas.width, canvas.height);
-            for (let i = 0; i < imageData.data.length; i += 4) {
-                const value = Math.random() * 255;
-                imageData.data[i] = value;
-                imageData.data[i + 1] = value;
-                imageData.data[i + 2] = value;
-                imageData.data[i + 3] = Math.random() * 50;
-            }
-            ctx.putImageData(imageData, 0, 0);
-            requestAnimationFrame(drawNoise);
-        }
-        drawNoise();
-
-        // Титульный экран
-        function startIntro() {
-            document.getElementById('intro').style.display = 'flex';
-            let flashes = 0;
-            const interval = setInterval(() => {
-                document.body.classList.toggle('inversion');
-                document.getElementById('intro').classList.toggle('glitch');
-                flashes++;
-                if (flashes > 10) {
-                    clearInterval(interval);
-                    document.getElementById('intro').style.display = 'none';
-                    document.body.classList.remove('inversion', 'glitch');
-                    startMain();
-                }
-            }, 500);
-        }
-
-        // Основной экран
-        function startMain() {
-            document.getElementById('main').style.display = 'block';
-            const main = document.getElementById('main');
-
-            // Добавление изображений и дубликатов
-            const images = [
-                { src: 'data:image/png;base64,IMAGE1_BASE64', x: 100, y: 100 },
-                { src: 'data:image/png;base64,IMAGE2_BASE64', x: 300, y: 200 }
-            ];
-            images.forEach(img => {
-                for (let i = 0; i < 5; i++) {
-                    const isOriginal = i === 0;
-                    const element = document.createElement('img');
-                    element.src = img.src;
-                    element.className = isOriginal ? 'image' : 'duplicate';
-                    element.style.left = `${img.x + (i * 15)}px`;
-                    element.style.top = `${img.y + (i * 15)}px`;
-                    if (!isOriginal) element.style.opacity = 0.4 + Math.random() * 0.2;
-                    main.appendChild(element);
-                }
-            });
-
-            // Добавление текстовых ошибок
-            const errors = [
-                'Kļūda 404: Maruta Pēča nav atrasta',
-                'VIRUS INFECTED',
-                'SISTĒMAS SABRUKUMS',
-                'Maruta Pēča tevi vēro',
-                'FATAL ERROR',
-                'DISK CORRUPTED'
-            ];
-            for (let i = 0; i < 15; i++) {
-                const error = document.createElement('div');
-                error.className = 'error';
-                error.innerText = errors[Math.floor(Math.random() * errors.length)];
-                error.style.left = `${Math.random() * 100}%`;
-                error.style.top = `${Math.random() * 100}%`;
-                main.appendChild(error);
-            }
-
-            // Периодическая инверсия и глитч
-            setInterval(() => {
-                document.body.classList.toggle('inversion');
-                const els = document.querySelectorAll('.image, .duplicate');
-                els.forEach(el => el.classList.toggle('glitch'));
-            }, 2000);
-
-            // Динамическое добавление дубликатов учительницы
-            setInterval(() => {
-                const teacher = document.createElement('img');
-                teacher.src = 'data:image/png;base64,IMAGE2_BASE64';
-                teacher.className = 'duplicate';
-                teacher.style.left = `${Math.random() * 100}%`;
-                teacher.style.top = `${Math.random() * 100}%`;
-                teacher.style.opacity = 0.5;
-                main.appendChild(teacher);
-                setTimeout(() => teacher.remove(), 3000);
-            }, 1000);
-        }
-
-        // Управление
-        let keys = { w: false, s: false, a: false, d: false };
-        document.addEventListener('keydown', e => {
-            if (e.key === 'w') keys.w = true;
-            if (e.key === 's') keys.s = true;
-            if (e.key === 'a') keys.a = true;
-            if (e.key === 'd') keys.d = true;
-            moveImages();
-        });
-        document.addEventListener('keyup', e => {
-            if (e.key === 'w') keys.w = false;
-            if (e.key === 's') keys.s = false;
-            if (e.key === 'a') keys.a = false;
-            if (e.key === 'd') keys.d = false;
-        });
-
-        function move(dir) {
-            if (dir === 'up') keys.w = true;
-            if (dir === 'down') keys.s = true;
-            if (dir === 'left') keys.a = true;
-            if (dir === 'right') keys.d = true;
-            moveImages();
-        }
-
-        function stop() {
-            keys.w = keys.s = keys.a = keys.d = false;
-        }
-
-        function moveImages() {
-            const images = document.querySelectorAll('.image, .duplicate');
-            images.forEach(img => {
-                let x = parseFloat(img.style.left) || 0;
-                let y = parseFloat(img.style.top) || 0;
-                if (keys.w) y -= 5;
-                if (keys.s) y += 5;
-                if (keys.a) x -= 5;
-                if (keys.d) x += 5;
-                img.style.left = `${x}px`;
-                img.style.top = `${y}px`;
-            });
-        }
-    </script>
-</body>
-</html><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>P3ČA</title>
-    <link rel="icon" href="data:image/png;base64,IMAGE1_BASE64">
-    <link rel="apple-touch-icon" href="data:image/png;base64,IMAGE1_BASE64">
-    <link rel="manifest" href="data:application/json,{
-        \"name\": \"P3ČA\",
-        \"short_name\": \"P3ČA\",
-        \"start_url\": \".\",
-        \"display\": \"standalone\",
-        \"background_color\": \"#000000\",
-        \"theme_color\": \"#000000\",
-        \"icons\": [
-            {
-                \"src\": \"data:image/png;base64,IMAGE1_BASE64\",
-                \"sizes\": \"512x512\",
-                \"type\": \"image/png\"
-            }
-        ]
-    }">
-    <style>
-        body { margin: 0; overflow: hidden; font-family: monospace; color: #fff; background: #000; }
-        #intro, #main, #install-prompt { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
-        #intro { display: flex; align-items: center; justify-content: center; font-size: 32px; background: #000; }
-        #main { background: #000; }
-        .image, .duplicate { position: absolute; width: 200px; animation: shake 0.1s infinite; }
-        .duplicate { opacity: 0.5; transform: translate(10px, 10px); }
-        .error { position: absolute; font-size: 18px; color: #f00; animation: glitch-text 0.2s infinite; }
-        .glitch { animation: glitch 0.1s infinite alternate; }
-        .inversion { filter: invert(100%); }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            50% { transform: translate(5px, 5px); }
-            100% { transform: translate(-5px, -5px); }
-        }
-        @keyframes glitch-text {
-            0% { transform: skew(0deg); }
-            50% { transform: skew(10deg); }
-            100% { transform: skew(-10deg); }
-        }
-        @keyframes shake {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(3px, 3px); }
-            100% { transform: translate(-3px, -3px); }
-        }
-        #controls { position: fixed; bottom: 10px; right: 10px; display: flex; gap: 10px; }
-        .control-btn { width: 60px; height: 60px; background: rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        @media (min-width: 768px) { .control-btn { display: none; } }
-    </style>
-</head>
-<body>
-    <div id="install-prompt">Lūdzu, pievienojiet lietotni sākuma ekrānam!</div>
-    <div id="intro">By hexwound</div>
-    <div id="main"></div>
-    <div id="controls">
-        <div class="control-btn" ontouchstart="move('up')" ontouchend="stop()">↑</div>
-        <div class="control-btn" ontouchstart="move('left')" ontouchend="stop()">←</div>
-        <div class="control-btn" ontouchstart="move('right')" ontouchend="stop()">→</div>
-        <div class="control-btn" ontouchstart="move('down')" ontouchend="stop()">↓</div>
+    <div id="horror-app">
+        <div class="error-overlay"></div>
     </div>
-    <audio id="creepy" src="data:audio/mp3;base64,SOUND_BASE64" loop autoplay></audio>
+    <audio id="creepy-sound" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/07/28/audio_6c3b3b3b3b.mp3" type="audio/mp3">
+    </audio>
+
     <script>
-        // PWA проверка
-        window.addEventListener('load', () => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('data:application/javascript,navigator.serviceWorker.controller.postMessage("sw");');
-            }
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('install-prompt').style.display = 'block';
-                return;
-            }
-            document.getElementById('install-prompt').style.display = 'none';
-            startIntro();
-        });
+        const titleScreen = document.getElementById('title-screen');
+        const desktop = document.getElementById('desktop');
+        const horrorApp = document.getElementById('horror-app');
+        const creepySound = document.getElementById('creepy-sound');
 
-        // Титульный экран
-        function startIntro() {
-            document.getElementById('intro').style.display = 'flex';
-            let flashes = 0;
-            const interval = setInterval(() => {
-                document.body.classList.toggle('inversion');
-                document.getElementById('intro').classList.toggle('glitch');
-                flashes++;
-                if (flashes > 10) {
-                    clearInterval(interval);
-                    document.getElementById('intro').style.display = 'none';
-                    document.body.classList.remove('inversion', 'glitch');
-                    startMain();
-                }
-            }, 500);
+        // Show title screen for 3 seconds, then transition to desktop
+        setTimeout(() => {
+            titleScreen.style.display = 'none';
+            desktop.style.display = 'flex';
+        }, 3000);
+
+        function launchApp() {
+            desktop.style.display = 'none';
+            horrorApp.style.display = 'block';
+            creepySound.play();
+
+            // Generate glitch effects
+            setInterval(() => {
+                createGlitchImage();
+                createGlitchText();
+            }, 200);
         }
 
-        // Основной экран
-        function startMain() {
-            document.getElementById('main').style.display = 'block';
-            const main = document.getElementById('main');
+        function createGlitchImage() {
+            const img = document.createElement('img');
+            img.src = Math.random() > 0.5 ? 'https://i.ibb.co/dwXDBk7P/IMG-0458.jpg' : 'https://i.ibb.co/xKrRv20G/IMG-0457.jpg';
+            img.classList.add('glitch-image');
+            if (Math.random() > 0.5) img.classList.add('invert');
+            if (Math.random() > 0.5) img.classList.add('pixelate');
+            img.style.width = `${Math.random() * 200 + 100}px`;
+            img.style.left = `${Math.random() * window.innerWidth}px`;
+            img.style.top = `${Math.random() * window.innerHeight}px`;
+            horrorApp.appendChild(img);
 
-            // Добавление изображений и дубликатов
-            const images = [
-                { src: 'data:image/png;base64,IMAGE1_BASE64', x: 100, y: 100 },
-                { src: 'data:image/png;base64,IMAGE2_BASE64', x: 300, y: 200 }
+            // Remove after 2 seconds to prevent overload
+            setTimeout(() => img.remove(), 2000);
+        }
+
+        function createGlitchText() {
+            const text = document.createElement('div');
+            const phrases = [
+                'ERROR 404',
+                'TEACHER_NAME',
+                'VIRUS DETECTED',
+                'SYSTEM FAILURE',
+                'RUN',
+                'HELP ME'
             ];
-            images.forEach(img => {
-                const original = document.createElement('img');
-                original.src = img.src;
-                original.className = 'image';
-                original.style.left = `${img.x}px`;
-                original.style.top = `${img.y}px`;
-                main.appendChild(original);
+            text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+            text.classList.add('glitch-text');
+            if (Math.random() > 0.5) text.classList.add('invert');
+            text.style.left = `${Math.random() * window.innerWidth}px`;
+            text.style.top = `${Math.random() * window.innerHeight}px`;
+            horrorApp.appendChild(text);
 
-                const duplicate = document.createElement('img');
-                duplicate.src = img.src;
-                duplicate.className = 'duplicate';
-                duplicate.style.left = `${img.x}px`;
-                duplicate.style.top = `${img.y}px`;
-                main.appendChild(duplicate);
-            });
-
-            // Добавление текстовых ошибок
-            const errors = ['Kļūda 404: Maruta Pēča nav atrasta', 'VIRUS DETECTED', 'SISTĒMAS SABRUKUMS', 'Maruta Pēča tevi vēro'];
-            for (let i = 0; i < 10; i++) {
-                const error = document.createElement('div');
-                error.className = 'error';
-                error.innerText = errors[Math.floor(Math.random() * errors.length)];
-                error.style.left = `${Math.random() * 100}%`;
-                error.style.top = `${Math.random() * 100}%`;
-                main.appendChild(error);
-            }
-
-            // Периодическая инверсия
-            setInterval(() => {
-                document.body.classList.toggle('inversion');
-            }, 2000);
-
-            // Дополнительные глитч-эффекты
-            setInterval(() => {
-                const els = document.querySelectorAll('.image, .duplicate');
-                els.forEach(el => el.classList.toggle('glitch'));
-            }, 1000);
-        }
-
-        // Управление
-        let keys = { w: false, s: false, a: false, d: false };
-        document.addEventListener('keydown', e => {
-            if (e.key === 'w') keys.w = true;
-            if (e.key === 's') keys.s = true;
-            if (e.key === 'a') keys.a = true;
-            if (e.key === 'd') keys.d = true;
-            moveImages();
-        });
-        document.addEventListener('keyup', e => {
-            if (e.key === 'w') keys.w = false;
-            if (e.key === 's') keys.s = false;
-            if (e.key === 'a') keys.a = false;
-            if (e.key === 'd') keys.d = false;
-        });
-
-        function move(dir) {
-            if (dir === 'up') keys.w = true;
-            if (dir === 'down') keys.s = true;
-            if (dir === 'left') keys.a = true;
-            if (dir === 'right') keys.d = true;
-            moveImages();
-        }
-
-        function stop() {
-            keys.w = keys.s = keys.a = keys.d = false;
-        }
-
-        function moveImages() {
-            const images = document.querySelectorAll('.image, .duplicate');
-            images.forEach(img => {
-                let x = parseFloat(img.style.left);
-                let y = parseFloat(img.style.top);
-                if (keys.w) y -= 5;
-                if (keys.s) y += 5;
-                if (keys.a) x -= 5;
-                if (keys.d) x += 5;
-                img.style.left = `${x}px`;
-                img.style.top = `${y}px`;
-            });
+            // Remove after 2 seconds
+            setTimeout(() => text.remove(), 2000);
         }
     </script>
 </body>
